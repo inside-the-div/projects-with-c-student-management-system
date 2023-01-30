@@ -43,10 +43,10 @@ void Menu();
 void AddNewStudent();
 void ShowAllStudents();
 int  SearchStudent(char StudentID[10]);
-void EditStudent(int StudentFoundIndex);
-void DeleteStudent(int StudentIndex);
+void EditStudent(char StudentID[10]);
+void DeleteStudent(char StudentID[10]);
 void DeleteAllStudents();
-int  IsAlreadyExists(char GivenLine[30],char InfoType, char StudentID[300]);
+int countValue(char *givenLine,char InfoType);
 void ErrorAndRestart(char *Error[100]);
 void DeleteCourseByIndex(int CourseIndex);
 void DeleteStudentByIndex(int CourseIndex);
@@ -107,7 +107,7 @@ int main()
 
             if(StudentFoundIndex>=0)
             {
-                EditStudent(StudentFoundIndex);
+                EditStudent(StudentID);
             }
             else
             {
@@ -133,7 +133,7 @@ int main()
 
                 if(Sure == 'Y' || Sure == 'y')
                 {
-                    DeleteStudent(DeleteStudentFoundIndex);
+                    DeleteStudent(StudentID);
                 }
                 else
                 {
@@ -188,7 +188,6 @@ int main()
             break;
         }
     }
-
     return 0;
 } // end main function
 
@@ -213,166 +212,157 @@ void Menu()
 
 void AddNewStudent()
 {
-    char StudentID[300];
-    char Name[300];
-    char Phone[300];
-    char Email[300];
-    int NumberOfCourses;
-    char CourseCode[300];
-    char CourseName[300];
 
-    int IsValidID = 0;
+    struct StudentInfo NewStudent;
+
+
+    bool IsValidID = false;
     while(!IsValidID)
     {
         printf(" Enter The ID: ");
-        scanf("%s",&StudentID);
-        if(IsAlreadyExists(StudentID,'i',StudentID) > 0)
+        scanf("%s",&NewStudent.ID);
+
+        if(countValue(NewStudent.ID,'i') > 0)
         {
             printf(" Error: This ID is already exists.\n\n");
-            IsValidID = 0;
+            IsValidID = false;
         }
-        else if(strlen(StudentID) > 10)
+        else if(strlen(NewStudent.ID) > 10)
         {
             printf(" Error: ID can not be more than 10 characters.\n\n");
-            IsValidID = 0;
+            IsValidID = false;
         }
-        else if(strlen(StudentID) <= 0)
+        else if(strlen(NewStudent.ID) <= 0)
         {
             printf(" Error: ID can not be empty.\n\n");
-            IsValidID = 0;
+            IsValidID = false;
         }
         else
         {
-            IsValidID = 1;
+            IsValidID = true;
         }
     }
 
-    int IsValidName = 0;
+
+    bool IsValidName = false;
     while(!IsValidName)
     {
         printf(" Enter The Name: ");
-        scanf(" %[^\n]s",&Name);
-        if(strlen(Name) > 20)
+        scanf(" %[^\n]s",&NewStudent.Name);
+
+        if(strlen(NewStudent.Name) > 20)
         {
             printf(" Error: Name can not be more than 20 characters.\n\n");
-            IsValidName = 0;
+            IsValidName = false;
         }
-        if(strlen(Name) <= 0)
+        if(strlen(NewStudent.Name) <= 0)
         {
             printf(" Error: Name can not be empty.\n\n");
-            IsValidName = 0;
+            IsValidName = false;
         }
         else
         {
-            IsValidName = 1;
+            IsValidName = true;
         }
     }
 
-    int IsValidEmail = 0;
+
+    bool IsValidEmail = false;
     while(!IsValidEmail)
     {
         printf(" Enter The Email: ");
-        scanf("%s",&Email);
-        if(IsAlreadyExists(Email,'e',StudentID) > 0)
+        scanf("%s",&NewStudent.Email);
+
+        if(countValue(NewStudent.Email,'e') > 0)
         {
             printf(" This Email is Already Exists.\n");
-            IsValidEmail = 0;
+            IsValidEmail = false;
         }
-        else if(strlen(Email) > 30)
+        else if(strlen(NewStudent.Email) > 30)
         {
             printf(" Error: Email can not be more than 30 characters.\n\n");
-            IsValidEmail = 0;
+            IsValidEmail = false;
         }
-        else if(strlen(Email) <= 0)
+        else if(strlen(NewStudent.Email) <= 0)
         {
             printf(" Error: Email can not be empty.\n\n");
-            IsValidEmail = 0;
+            IsValidEmail = false;
         }
         else
         {
-            IsValidEmail = 1;
+            IsValidEmail = true;
         }
     }
 
-    int IsValidPhone = 0;
+
+    bool IsValidPhone = false;
     while(!IsValidPhone)
     {
         printf(" Enter The Phone: ");
-        scanf("%s",&Phone);
-        if(IsAlreadyExists(Phone,'p',StudentID) > 0)
+        scanf("%s",&NewStudent.Phone);
+        if(countValue(NewStudent.Phone,'p') > 0)
         {
             printf(" This Phone Number is Already Exists\n");
-            IsValidPhone = 0;
+            IsValidPhone = false;
         }
-        else if(strlen(Phone) > 20)
+        else if(strlen(NewStudent.Phone) > 20)
         {
             printf(" Error: Phone can not be more than 20 characters.\n\n");
-            IsValidPhone = 0;
+            IsValidPhone = false;
         }
-        else if(strlen(Phone) <= 0)
+        else if(strlen(NewStudent.Phone) <= 0)
         {
             printf(" Error: Phone can not be empty.\n\n");
-            IsValidPhone = 0;
+            IsValidPhone = false;
         }
         else
         {
-            IsValidPhone = 1;
+            IsValidPhone = true;
         }
     }
 
-    int IsValidNumberOfCourse = 0;
+    bool IsValidNumberOfCourse = false;
     while(!IsValidNumberOfCourse)
     {
         printf(" Number of courses: ");
-        scanf("%d",&NumberOfCourses);
-        if(NumberOfCourses <= 0 || NumberOfCourses > 4)
+        scanf("%d",&NewStudent.NumberOfCourse);
+
+        if(NewStudent.NumberOfCourse <= 0 || NewStudent.NumberOfCourse > 4)
         {
             printf(" Error: Number of courses can not be more than 4 and lees than 1.\n\n");
-            IsValidNumberOfCourse = 0;
+            IsValidNumberOfCourse = false;
         }
         else
         {
-            IsValidNumberOfCourse = 1;
+            IsValidNumberOfCourse = true;
         }
     }
 
-    strcpy(Students[TotalStudents].ID,StudentID);
-    strcpy(Students[TotalStudents].Name,Name);
-    strcpy(Students[TotalStudents].Phone,Phone);
-    strcpy(Students[TotalStudents].Email,Email);
-    Students[TotalStudents].NumberOfCourse = NumberOfCourses;
-    TotalStudents++;
-
     // store information in file
     FILE *file_students = fopen("students.txt", "a");
-    fprintf(file_students, "%s,%s,%s,%s,%d\n",StudentID,Name,Email,Phone,NumberOfCourses);
+    fprintf(file_students, "%s,%s,%s,%s,%d\n",NewStudent.ID,NewStudent.Name,NewStudent.Email,NewStudent.Phone,NewStudent.NumberOfCourse);
     fclose(file_students);
     // end
 
+    struct CourseInfo Course;
 
-
-
-    for(i=0; i<NumberOfCourses; i++)
+    for(i=0; i<NewStudent.NumberOfCourse; i++)
     {
         printf(" Enter Course %d Code: ",i+1);
-        scanf("%s",&CourseCode);
+        scanf("%s",&Course.Code);
 
         printf(" Enter Course %d Name: ",i+1);
-        scanf(" %[^\n]s",&CourseName);
+        scanf(" %[^\n]s",&Course.Name);
 
-        strcpy(Courses[TotalCourse].StudentID,StudentID);
-        strcpy(Courses[TotalCourse].Code,CourseCode);
-        strcpy(Courses[TotalCourse].Name,CourseName);
-        TotalCourse++;
+        strcpy(Course.StudentID,NewStudent.ID);
 
         // store Course in file
         FILE *file_courses = fopen("courses.txt", "a");
-        fprintf(file_courses, "%s,%s,%s\n",StudentID,CourseCode,CourseName);
+        fprintf(file_courses, "%s,%s,%s\n",Course.StudentID,Course.Code,Course.Name);
         fclose(file_courses);
         // end
     }
 
-    printf("\n Student Added Successfully.\n\n");
 }
 
 void ShowAllStudents()
@@ -427,417 +417,398 @@ int SearchStudent(char StudentID[10])
     // student search from file
 
     char line[MAX_LINE_LENGTH];
-    char *student_id_from_file;
-    char *student_name_from_file;
-    char *student_email_from_file;
-    char *student_phone_from_file;
-    char *student_numbe_of_courses_from_file;
+    char *ID;
+    char *Name;
+    char *Email;
+    char *Phone;
+    char *NumberOfCourse;
 
     char *delimiter = ",";
     bool found = false;
     int student_index_from_file = -1;
 
-    FILE *file_students = fopen("students.txt", "r");
+    FILE *studentsFile = fopen("students.txt", "r");
 
-    while(fgets(line,MAX_LINE_LENGTH,file_students)){
-        student_index_from_file++;
-        student_id_from_file = strtok(line,delimiter);
-
-        if(strcmp(student_id_from_file,StudentID) == 0){
-            // we found a student
-            printf("\n One Student Found for ID: %s\n\n",student_id_from_file);
-            printf(" Student Informations\n");
-            printf("-------------------------\n");
-
-            printf(" ID:    %s\n",student_id_from_file);
-
-            student_name_from_file = strtok(NULL,delimiter); // name
-            printf(" Name:  %s\n",student_name_from_file);
-
-            student_email_from_file = strtok(NULL,delimiter); // email
-            printf(" Email: %s\n",student_email_from_file);
-
-            student_phone_from_file = strtok(NULL,delimiter); // phone
-            printf(" Phone: %s\n",student_phone_from_file);
-
-            student_numbe_of_courses_from_file = strtok(NULL,delimiter); // number of courses
-            printf("\n Total Number of Courses: %s\n",student_numbe_of_courses_from_file);
-
-            break;
-        }
-    }
-    fclose(file_students);
-
-    // show course information from file
-
-    char *course_code_from_file;
-    char *course_name_from_file;
-    int course_count_from_file = 0;
-    FILE *file_courses = fopen("courses.txt", "r");
-
-    while(fgets(line,MAX_LINE_LENGTH,file_courses)){
-        student_id_from_file = strtok(line,delimiter);
-
-        if(strcmp(student_id_from_file,StudentID) == 0){
-            course_count_from_file++;
-            course_code_from_file = strtok(NULL,delimiter); // code
-            printf(" Course %d Code: %s\n",course_count_from_file,course_code_from_file);
-            course_name_from_file = strtok(NULL,delimiter); // name
-            printf(" Course %d Name: %s\n",course_count_from_file,course_name_from_file);
-        }
-    }
-    fclose(file_courses);
-    // end
-
-
-    int StudentFoundIndex = student_index_from_file;
-
-    int i;
-    for(i=0; i<TotalStudents; i++)
+    while(fgets(line,MAX_LINE_LENGTH,studentsFile))
     {
-        if(strcmp(StudentID,Students[i].ID) == 0)
+        student_index_from_file++;
+        ID = strtok(line,delimiter);
+
+        if(strcmp(ID,StudentID) == 0)
         {
-            StudentFoundIndex = i;
+            // we found a student
             printf("\n One Student Found for ID: %s\n\n",StudentID);
             printf(" Student Informations\n");
             printf("-------------------------\n");
 
-            printf(" ID:    %s\n",Students[i].ID);
-            printf(" Name:  %s\n",Students[i].Name);
-            printf(" Email: %s\n",Students[i].Email);
-            printf(" Phone: %s\n",Students[i].Phone);
-            printf("\n Total Number of Courses: %d\n",Students[i].NumberOfCourse);
-        }
-    }
-    int CourseCount = 0;
-    int j;
-    for(j=0; j<TotalCourse; j++)
-    {
-        if(strcmp(StudentID,Courses[j].StudentID) == 0)
-        {
-            CourseCount++;
-            printf(" Course %d Code: %s\n",CourseCount,Courses[j].Code);
-            printf(" Course %d Name: %s\n",CourseCount,Courses[j].Name);
-        }
-    }
+            printf(" ID:    %s\n",ID);
 
-    return StudentFoundIndex;
+            Name = strtok(NULL,delimiter); // name
+            printf(" Name:  %s\n",Name);
+
+            Email = strtok(NULL,delimiter); // email
+            printf(" Email: %s\n",Email);
+
+            Phone = strtok(NULL,delimiter); // phone
+            printf(" Phone: %s\n",Phone);
+
+            NumberOfCourse = strtok(NULL,delimiter); // number of courses
+            printf("\n Number of Courses: %s\n",NumberOfCourse);
+
+            break;
+        }
+    }
+    fclose(studentsFile);
+
+    // show course information from file
+
+    char *Code;
+    char *CourseName;
+    int course_count_from_file = 0;
+    FILE *coursesFile = fopen("courses.txt", "r");
+
+    while(fgets(line,MAX_LINE_LENGTH,coursesFile))
+    {
+        ID = strtok(line,delimiter);
+
+        if(strcmp(ID,StudentID) == 0)
+        {
+            course_count_from_file++;
+            Code = strtok(NULL,delimiter); // code
+            printf(" Course %d Code: %s\n",course_count_from_file,Code);
+            CourseName = strtok(NULL,delimiter); // name
+            printf(" Course %d Name: %s\n",course_count_from_file,CourseName);
+        }
+    }
+    fclose(coursesFile);
+    // end
+
+    return student_index_from_file;
 }
 
-void EditStudent(int StudentFoundIndex)
+void EditStudent(char StudentID[10])
 {
     printf("\n\t\t **** Update The New Student ****\n\n");
 
     // get old student information from file
     // we have index
     char line[MAX_LINE_LENGTH];
-    char *old_student_id_from_file;
-    char *old_student_name_from_file;
-    char *old_student_email_from_file;
-    char *old_student_phone_from_file;
-    char *old_student_numbe_of_courses_from_file;
+    char line2[MAX_LINE_LENGTH];
+    char *old_ID;
+    char *old_Name;
+    char *old_Email;
+    char *old_Phone;
+    char *old_NumberOfCourse;
     char *delimiter = ",";
     int count_line = -1;
 
-    FILE *file_students = fopen("students.txt", "r");
-    while(fgets(line,MAX_LINE_LENGTH,file_students)){
+    FILE *studentsFile = fopen("students.txt", "r");
+    while(fgets(line,MAX_LINE_LENGTH,studentsFile))
+    {
         count_line++;
-        if(count_line == StudentFoundIndex){
-            // we do not search by ID coz, we already know the index
-            // or line number
-
-            old_student_id_from_file = strtok(line,delimiter);
-            old_student_name_from_file = strtok(line,delimiter);
-            old_student_email_from_file = strtok(line,delimiter);
-            old_student_phone_from_file = strtok(line,delimiter);
-            old_student_id_from_file = strtok(line,delimiter);
-            old_student_numbe_of_courses_from_file = strtok(line,delimiter);
-
+        old_ID = strtok(line,delimiter);
+        if(strcmp(old_ID,StudentID) == 0)
+        {
+            old_Name = strtok(NULL,delimiter);
+            old_Email = strtok(NULL,delimiter);
+            old_Phone = strtok(NULL,delimiter);
+            old_NumberOfCourse = strtok(NULL,delimiter);
+            break;
         }
     }
     // end
 
+    fclose(studentsFile);
 
+    struct StudentInfo NewStudent;
+    struct StudentInfo UpdatedStudent;
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    char NewName[300];
-    char NewPhone[300];
-    char NewEmail[300];
-    int NewNumberOfCourses;
-    char StudentID[300];
-    strcpy(StudentID, Students[StudentFoundIndex].ID);
-    int OldTotalNumberOfCourse = Students[StudentFoundIndex].NumberOfCourse;
-
-    int IsValidName = 0;
+    bool IsValidName = false;
     while(!IsValidName)
     {
         printf(" Enter The New Name(0 for skip): ");
-        scanf(" %[^\n]s",&NewName);
-        if(strlen(NewName) > 20)
+        scanf(" %[^\n]s",&NewStudent.Name);
+
+        if(strlen(NewStudent.Name) > 20)
         {
             printf(" Error: Name can not be more than 20 characters.\n\n");
-            IsValidName = 0;
+            IsValidName = false;
         }
-        else if(strlen(NewName) <= 0)
+        if(strlen(NewStudent.Name) <= 0)
         {
             printf(" Error: Name can not be empty.\n\n");
-            IsValidName = 0;
+            IsValidName = false;
         }
         else
         {
-            IsValidName = 1;
+            IsValidName = true;
         }
     }
 
-    int IsValidEmail = 0;
+
+    bool IsValidEmail = false;
     while(!IsValidEmail)
     {
         printf(" Enter The New Email(0 for skip): ");
-        scanf("%s",&NewEmail);
+        scanf("%s",&NewStudent.Email);
 
-        if(strlen(NewEmail) > 30)
+        if(countValue(NewStudent.Email,'e') > 1 && strcmp(old_Email,NewStudent.Email) != 0)
+        {
+            printf(" This Email is Already Exists.\n");
+            IsValidEmail = false;
+        }
+        else if(strlen(NewStudent.Email) > 30)
         {
             printf(" Error: Email can not be more than 30 characters.\n\n");
-            IsValidEmail = 0;
+            IsValidEmail = false;
         }
-        else if(strlen(NewEmail) <= 0)
+        else if(strlen(NewStudent.Email) <= 0)
         {
             printf(" Error: Email can not be empty.\n\n");
-            IsValidEmail = 0;
-        }
-        else if(IsAlreadyExists(NewEmail,'e',StudentID) > 0)
-        {
-            printf(" Error: This Email Already Exists.\n\n");
-            IsValidEmail = 0;
+            IsValidEmail = false;
         }
         else
         {
-            IsValidEmail = 1;
+            IsValidEmail = true;
         }
     }
 
-    int IsValidPhone = 0;
+    bool IsValidPhone = false;
     while(!IsValidPhone)
     {
         printf(" Enter The New Phone(0 for skip): ");
-        scanf("%s",&NewPhone);
-
-        if(strlen(NewPhone) > 20)
+        scanf("%s",&NewStudent.Phone);
+        if(countValue(NewStudent.Phone,'p') > 1 && strcmp(old_Phone,NewStudent.Phone) !=0)
+        {
+            printf(" This Phone Number is Already Exists\n");
+            IsValidPhone = false;
+        }
+        else if(strlen(NewStudent.Phone) > 20)
         {
             printf(" Error: Phone can not be more than 20 characters.\n\n");
-            IsValidPhone = 0;
+            IsValidPhone = false;
         }
-        else if(strlen(NewPhone) <= 0)
+        else if(strlen(NewStudent.Phone) <= 0)
         {
             printf(" Error: Phone can not be empty.\n\n");
-            IsValidPhone = 0;
-        }
-        else if(IsAlreadyExists(NewPhone,'p',StudentID) > 0)
-        {
-            printf(" Error: This Phone Number is Already Exists.\n\n");
-            IsValidPhone = 0;
+            IsValidPhone = false;
         }
         else
         {
-            IsValidPhone = 1;
+            IsValidPhone = true;
         }
     }
 
-    int IsValidNumberOfCourse = 0;
+    bool IsValidNumberOfCourse = false;
     while(!IsValidNumberOfCourse)
     {
         printf(" Number of New courses(0 for skip): ");
-        scanf("%d",&NewNumberOfCourses);
+        scanf("%d",&NewStudent.NumberOfCourse);
 
-        if(NewNumberOfCourses > 4 || NewNumberOfCourses < 0)
+        if(NewStudent.NumberOfCourse <= 0 || NewStudent.NumberOfCourse > 4)
         {
-            printf(" Error: A Student can have maximum 4 and Minimum 0 number of courses.\n\n");
-            IsValidNumberOfCourse = 0;
+            printf(" Error: Number of courses can not be more than 4 and lees than 1.\n\n");
+            IsValidNumberOfCourse = false;
         }
         else
         {
-            IsValidNumberOfCourse = 1;
+            IsValidNumberOfCourse = true;
         }
     }
 
-    if(strcmp(NewName,"0") != 0)
+    strcpy(UpdatedStudent.ID,old_ID);
+
+    if(strcmp(NewStudent.Email,"0") != 0)
     {
-        strcpy(Students[StudentFoundIndex].Name,NewName);
+        strcpy(UpdatedStudent.Name,NewStudent.Email);
+    }else{
+        strcpy(UpdatedStudent.Name,old_Email);
     }
 
-    if(strcmp(NewEmail,"0") != 0)
+    if(strcmp(NewStudent.Email,"0") != 0)
     {
-        strcpy(Students[StudentFoundIndex].Email,NewEmail);
+        strcpy(UpdatedStudent.Email,NewStudent.Email);
+    }else{
+        strcpy(UpdatedStudent.Email,old_Email);
     }
 
-    if(strcmp(NewPhone,"0") != 0)
+    if(strcmp(NewStudent.Phone,"0") != 0)
     {
-        strcpy(Students[StudentFoundIndex].Phone,NewPhone);
+        strcpy(UpdatedStudent.Phone,NewStudent.Phone);
+    }else{
+        strcpy(UpdatedStudent.Phone,old_Phone);
     }
 
-    if(NewNumberOfCourses != 0)
-    {
-        int OldTotalCourse = Students[StudentFoundIndex].NumberOfCourse;
-        Students[StudentFoundIndex].NumberOfCourse = NewNumberOfCourses;
 
+    if(NewStudent.NumberOfCourse > 0){
+        //itoa(num, snum, 10);
+        UpdatedStudent.NumberOfCourse = NewStudent.NumberOfCourse;
 
-        int FirstCourseIndex;
-        int dc;
-        for(dc=0; dc<TotalCourse; dc++)
+    }else{
+        UpdatedStudent.NumberOfCourse = atoi(old_NumberOfCourse);
+    }
+
+    // update the text file
+
+    FILE *MainStudentsFile = fopen("students.txt", "r");
+    FILE *TempStudentsFile = fopen("temp-students.txt", "w");
+
+    while(fgets(line,MAX_LINE_LENGTH,MainStudentsFile)){
+        strcpy(line2,line);
+        old_ID = strtok(line,delimiter);
+
+        if(strcmp(old_ID,StudentID) != 0)
         {
-            if(strcmp(StudentID,Courses[dc].StudentID) == 0)
-            {
-                FirstCourseIndex = dc; // store the index for delete
-                break;
+            fprintf(TempStudentsFile,"%s",line2);
+        }
+    }
+
+    fprintf(TempStudentsFile, "%s,%s,%s,%s,%d\n",UpdatedStudent.ID,UpdatedStudent.Name,UpdatedStudent.Email,UpdatedStudent.Phone,UpdatedStudent.NumberOfCourse);
+    fclose(TempStudentsFile);
+    fclose(MainStudentsFile);
+
+    remove("students.txt");
+    rename("temp-students.txt","students.txt");
+    // end
+
+    if(UpdatedStudent.NumberOfCourse != 0)
+    {
+        // store Course in file
+        FILE *CoursesFile = fopen("courses.txt", "r");
+        FILE *TempCoursesFile = fopen("temp-courses.txt", "w");
+        while(fgets(line,MAX_LINE_LENGTH,CoursesFile)){
+            strcpy(line2,line);
+            old_ID = strtok(line,delimiter);
+            if(strcmp(old_ID,StudentID) != 0){
+                fprintf(TempCoursesFile,line2);
             }
         }
-        // after every delete array index will update (decrease by one)
-        // we store the courses sequential
-        // so if we know the first course index and total number of course we can delete all
-        for(dc=1; dc<=OldTotalCourse; dc++)
+
+        struct CourseInfo Course;
+
+        for(i=0; i<UpdatedStudent.NumberOfCourse; i++)
         {
-            DeleteCourseByIndex(FirstCourseIndex);
+            printf(" Enter Course %d Code: ",i+1);
+            scanf("%s",&Course.Code);
+
+            printf(" Enter Course %d Name: ",i+1);
+            scanf(" %[^\n]s",&Course.Name);
+
+            strcpy(Course.StudentID,UpdatedStudent.ID);
+
+            fprintf(TempCoursesFile, "%s,%s,%s\n",Course.StudentID,Course.Code,Course.Name);
+            // end
         }
 
-        char CourseCode[300];
-        char CourseName[300];
-        for(i=1; i<=NewNumberOfCourses; i++)
-        {
-            printf(" Enter New Course %d Code: ",i);
-            scanf("%s",&CourseCode);
+        fclose(CoursesFile);
+        fclose(TempCoursesFile);
 
-            printf(" Enter New Course %d Name: ",i);
-            scanf(" %[^\n]s",&CourseName);
-
-            strcpy(Courses[TotalCourse].StudentID,StudentID);
-            strcpy(Courses[TotalCourse].Code,CourseCode);
-            strcpy(Courses[TotalCourse].Name,CourseName);
-            TotalCourse++;
-        }
+        remove("courses.txt");
+        rename("temp-courses.txt","courses.txt");
     }
-
-    printf(" Student Updated Successfully.\n\n");
+//
+//    printf(" Student Updated Successfully.\n\n");
 
 }
 
-void DeleteStudent(int StudentIndex)
+void DeleteStudent(char StudentID[10])
 {
-    int d;
-    int FirstCourseIndexs;
-    struct StudentInfo ThisStudents;
-    ThisStudents = Students[StudentIndex];
-    for(d=0; d<TotalCourse; d++)
-    {
-        if(strcmp(ThisStudents.ID,Courses[d].StudentID) == 0)
+
+    char line[MAX_LINE_LENGTH];
+    char line2[MAX_LINE_LENGTH];
+    char *ID;
+    char *delimiter = ",";
+
+    FILE *MainStudentsFile = fopen("students.txt", "r");
+    FILE *TempStudentsFile = fopen("temp-students.txt", "w");
+
+    while(fgets(line,MAX_LINE_LENGTH,MainStudentsFile)){
+        strcpy(line2,line);
+        ID = strtok(line,delimiter);
+
+        if(strcmp(ID,StudentID) != 0)
         {
-            FirstCourseIndexs = d;
-            break;
+            fprintf(TempStudentsFile,"%s",line2);
         }
     }
-    for(d=1; d<=ThisStudents.NumberOfCourse; d++)
-    {
-        DeleteCourseByIndex(FirstCourseIndexs);
+
+    fclose(TempStudentsFile);
+    fclose(MainStudentsFile);
+
+    remove("students.txt");
+    rename("temp-students.txt","students.txt");
+
+    // store Course in file
+    FILE *CoursesFile = fopen("courses.txt", "r");
+    FILE *TempCoursesFile = fopen("temp-courses.txt", "w");
+    while(fgets(line,MAX_LINE_LENGTH,CoursesFile)){
+        strcpy(line2,line);
+        ID = strtok(line,delimiter);
+        if(strcmp(ID,StudentID) != 0){
+            fprintf(TempCoursesFile,line2);
+        }
     }
-    DeleteStudentByIndex(StudentIndex);
+
+    fclose(CoursesFile);
+    fclose(TempCoursesFile);
+
+    remove("courses.txt");
+    rename("temp-courses.txt","courses.txt");
+
+
     printf(" Student Deleted Successfully.\n\n");
     GoBackOrExit();
 }
 
 void DeleteAllStudents()
 {
-    TotalStudents = 0;
-    TotalCourse = 0;
+    remove("students.txt");
+    FILE *TempStudentsFile = fopen("students.txt", "w");
+    fclose(TempStudentsFile);
+
+    remove("courses.txt");
+    FILE *TempCoursesFile = fopen("courses.txt", "w");
+    fclose(TempCoursesFile);
+
     printf(" All Students Deleted Successfully.\n\n");
     GoBackOrExit();
 }
 
-
-void DeleteCourseByIndex(int CourseIndex)
+int countValue(char *givenLine, char InfoType)
 {
-    int c;
-    for(c=0; c<TotalCourse-1; c++)
+    char line[MAX_LINE_LENGTH];
+    char *ID,*Name,*Email,*Phone,*NumberOfCourse;
+    char *delimiter = ",";
+    FILE *studentsFile;
+    int count = 0;
+
+    studentsFile = fopen("students.txt","r");
+
+    while(fgets(line,MAX_LINE_LENGTH,studentsFile))
     {
-        if(c>=CourseIndex)
+
+        ID = strtok(line,delimiter);
+        Name = strtok(NULL,delimiter);
+        Email = strtok(NULL,delimiter);
+        Phone = strtok(NULL,delimiter);
+        NumberOfCourse = strtok(NULL,delimiter);
+
+        if(strcmp(ID,givenLine) == 0 && InfoType == 'i')
         {
-            Courses[c] = Courses[c+1];
+            count++;
+        }
+        else if(strcmp(Email,givenLine) == 0 && InfoType == 'e')
+        {
+            count++;
+        }
+        else if(strcmp(Phone,givenLine) == 0 && InfoType == 'p')
+        {
+            count++;
         }
     }
-    TotalCourse--;
 
-}
-
-void DeleteStudentByIndex(int CourseIndex)
-{
-    int s;
-    for(s=0; s<TotalStudents-1; s++)
-    {
-        if(s>=CourseIndex)
-        {
-            Students[s] = Students[s+1];
-        }
-    }
-    TotalStudents--;
-}
-
-
-int IsAlreadyExists(char GivenLine[300],char InfoType, char StudentID[300])
-{
-    int EmailExists = 0;
-    int PhoneExists = 0;
-    int IDExists = 0;
-    int ep;
-
-    for(ep=0; ep<TotalStudents; ep++)
-    {
-        if(strcmp(GivenLine,Students[ep].ID) == 0)
-        {
-            IDExists++;
-        }
-        if(strcmp(GivenLine,Students[ep].Email) == 0 && strcmp(StudentID,Students[ep].ID) != 0 )
-        {
-            EmailExists++;
-        }
-        if(strcmp(GivenLine,Students[ep].Phone) == 0 && strcmp(StudentID,Students[ep].ID) != 0)
-        {
-            PhoneExists++;
-        }
-
-    }
-
-    if(InfoType == 'i')
-    {
-        return IDExists;
-    }
-    else if(InfoType == 'e')
-    {
-        return EmailExists;
-    }
-    else if(InfoType == 'p')
-    {
-        return PhoneExists;
-    }
-    else
-    {
-        return 0;
-    }
+    fclose(studentsFile);
+    return count;
 }
 
 void ErrorAndRestart(char *error[100])
@@ -914,58 +885,4 @@ void ExitProject()
         Sleep(40);
     }
     exit(0);
-}
-
-void DataSeed()
-{
-
-    //-- store some dummy data
-    //-- student 1
-    strcpy(Students[0].ID,"S-1");
-    strcpy(Students[0].Name,"Student 1");
-    strcpy(Students[0].Phone,"016111111111");
-    strcpy(Students[0].Email,"student-1@gmail.com");
-    Students[0].NumberOfCourse=1;
-
-    strcpy(Courses[0].StudentID,"S-1");
-    strcpy(Courses[0].Code,"CSE-1");
-    strcpy(Courses[0].Name,"Course - 1");
-
-    //-- student 2
-    strcpy(Students[1].ID,"S-2");
-    strcpy(Students[1].Name,"Student 2");
-    strcpy(Students[1].Phone,"016111111112");
-    strcpy(Students[1].Email,"student-2@gmail.com");
-    Students[1].NumberOfCourse=2;
-
-    strcpy(Courses[1].StudentID,"S-2");
-    strcpy(Courses[1].Code,"CSE-1");
-    strcpy(Courses[1].Name,"Course - 1");
-
-    strcpy(Courses[2].StudentID,"S-2");
-    strcpy(Courses[2].Code,"CSE-2");
-    strcpy(Courses[2].Name,"Course - 2");
-
-
-    //-- student 3
-    strcpy(Students[2].ID,"S-3");
-    strcpy(Students[2].Name,"Student 3");
-    strcpy(Students[2].Phone,"016111111113");
-    strcpy(Students[2].Email,"student-3@gmail.com");
-    Students[2].NumberOfCourse=3;
-
-    strcpy(Courses[3].StudentID,"S-3");
-    strcpy(Courses[3].Code,"CSE-1");
-    strcpy(Courses[3].Name,"Course - 1");
-
-    strcpy(Courses[4].StudentID,"S-3");
-    strcpy(Courses[4].Code,"CSE-2");
-    strcpy(Courses[4].Name,"Course - 2");
-
-    strcpy(Courses[5].StudentID,"S-3");
-    strcpy(Courses[5].Code,"CSE-3");
-    strcpy(Courses[5].Name,"Course - 3");
-
-    TotalStudents = 3;
-    TotalCourse = 6;
 }
