@@ -42,7 +42,7 @@ bool IsRunning = true;
 void Menu();
 void AddNewStudent();
 void ShowAllStudents();
-int  SearchStudent(char StudentID[10]);
+bool  SearchStudent(char StudentID[10]);
 void EditStudent(char StudentID[10]);
 void DeleteStudent(char StudentID[10]);
 void DeleteAllStudents();
@@ -54,12 +54,10 @@ void UserGuideline();
 void AboutUs();
 void GoBackOrExit();
 void ExitProject();
-void DataSeed();
+
 
 int main()
 {
-    DataSeed(); // you can comment this line if not want dummy data
-
     while(IsRunning)
     {
         Menu();
@@ -89,10 +87,10 @@ int main()
             printf("\n\t\t **** Search Students ****\n\n");
             printf(" Enter The Student ID: ");
             scanf("%s",StudentID);
-            int IsFound = SearchStudent(StudentID);
-            if(IsFound<0)
+            bool IsFound = SearchStudent(StudentID);
+            if(!IsFound)
             {
-                printf(" No Student Found\n\n");
+                printf("\n\n!!! No Student Found!!!\n\n");
             }
             printf("\n");
             GoBackOrExit();
@@ -103,7 +101,7 @@ int main()
             printf("\n\t\t **** Edit a Student ****\n\n");
             printf(" Enter The Student ID: ");
             scanf("%s",StudentID);
-            int StudentFoundIndex = SearchStudent(StudentID);
+            bool StudentFoundIndex = SearchStudent(StudentID);
 
             if(StudentFoundIndex>=0)
             {
@@ -121,7 +119,7 @@ int main()
             printf(" Enter The Student ID: ");
             scanf("%s",StudentID);
 
-            int DeleteStudentFoundIndex = SearchStudent(StudentID);
+            bool DeleteStudentFoundIndex = SearchStudent(StudentID);
 
             if(DeleteStudentFoundIndex>=0)
             {
@@ -363,54 +361,76 @@ void AddNewStudent()
         // end
     }
 
+    printf("\n\n Successfully Added New Student.\n");
+
 }
 
 void ShowAllStudents()
 {
+
+    char line[MAX_LINE_LENGTH];
+    char *delimiter = ",";
+    char *ID;
+    char *Name;
+    char *Email;
+    char *Phone;
+    char *NumberOfCourse;
+
+
     printf("|==========|====================|==============================|====================|=============|\n");
     printf("|    ID    |        Name        |            Email             |       Phone        |  NO.Course  |\n");
     printf("|==========|====================|==============================|====================|=============|\n");
 
-    for(i=0; i<TotalStudents; i++)
-    {
+
+    FILE *StudentFile = fopen("students.txt","r");
+
+    while(fgets(line,MAX_LINE_LENGTH,StudentFile)){
+
+        ID = strtok(line,delimiter);
+        Name = strtok(NULL,delimiter);
+        Email = strtok(NULL,delimiter);
+        Phone = strtok(NULL,delimiter);
+        NumberOfCourse = strtok(NULL,delimiter);
+        NumberOfCourse[1] = '\0'; // as we already know number of course will be always one character.
+
         printf("|");
-        printf("%s",Students[i].ID);
-        for(j=0; j < (10-strlen(Students[i].ID)); j++)
-        {
+        printf("%s",ID);
+        for(i=0;i< (10 - strlen(ID)); i++){
             printf(" ");
         }
+
         printf("|");
-        printf("%s",Students[i].Name);
-        for(j=0; j < (20-strlen(Students[i].Name)); j++)
-        {
+        printf("%s",Name);
+        for(i=0;i< (20 - strlen(Name)); i++){
             printf(" ");
         }
+
         printf("|");
-        printf("%s",Students[i].Email);
-        for(j=0; j < (30-strlen(Students[i].Email)); j++)
-        {
+        printf("%s",Email);
+        for(i=0;i< (30 - strlen(Email)); i++){
             printf(" ");
         }
+
         printf("|");
-        printf("%s",Students[i].Phone);
-        for(j=0; j < (20-strlen(Students[i].Phone)); j++)
-        {
+        printf("%s",Phone);
+        for(i=0;i< (20 - strlen(Phone)); i++){
             printf(" ");
         }
+
         printf("|");
-        printf("%d",Students[i].NumberOfCourse);
-        for(j=0; j < 12; j++)
-        {
+        printf("%s",NumberOfCourse);
+        for(i=0;i< (13 - strlen(NumberOfCourse)); i++){
             printf(" ");
         }
+
         printf("|\n");
         printf("|----------|--------------------|------------------------------|--------------------|-------------|\n");
-
     }
-    printf("\n");
+
+    fclose(StudentFile);
 }
 
-int SearchStudent(char StudentID[10])
+bool SearchStudent(char StudentID[10])
 {
     system("cls");
 
@@ -425,18 +445,19 @@ int SearchStudent(char StudentID[10])
 
     char *delimiter = ",";
     bool found = false;
-    int student_index_from_file = -1;
+
 
     FILE *studentsFile = fopen("students.txt", "r");
 
     while(fgets(line,MAX_LINE_LENGTH,studentsFile))
     {
-        student_index_from_file++;
+
         ID = strtok(line,delimiter);
 
         if(strcmp(ID,StudentID) == 0)
         {
             // we found a student
+            found = true;
             printf("\n One Student Found for ID: %s\n\n",StudentID);
             printf(" Student Informations\n");
             printf("-------------------------\n");
@@ -453,7 +474,7 @@ int SearchStudent(char StudentID[10])
             printf(" Phone: %s\n",Phone);
 
             NumberOfCourse = strtok(NULL,delimiter); // number of courses
-            printf("\n Number of Courses: %s\n",NumberOfCourse);
+            printf(" Number of Courses: %s\n",NumberOfCourse);
 
             break;
         }
@@ -483,7 +504,7 @@ int SearchStudent(char StudentID[10])
     fclose(coursesFile);
     // end
 
-    return student_index_from_file;
+    return found;
 }
 
 void EditStudent(char StudentID[10])

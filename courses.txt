@@ -1,0 +1,3 @@
+S1,CSE12,Course-1
+S1,CSE334,Course-2
+S2,CSE1,Course11
